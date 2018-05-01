@@ -15,8 +15,8 @@ CONFIG_FILE_PATH='/Users/kk/work/personal/github.com/configuration/config.proper
 def getfirstdateofthemonth():
 	return datetime.today().replace(day=1)
 	
-def getlastdateofthemonth():
-	next_month=datetime.today().replace(day=28) + timedelta(days=4)
+def getlastdateofthemonth(first_date):
+	next_month=first_date.replace(day=28) + timedelta(days=4)
 	return next_month - timedelta(days=next_month.day)
 
 def getSlackURL():
@@ -38,14 +38,26 @@ def sendSlackMessage(message):
 	urllib.request.urlopen(slackurl, payload)
 
 def getSupaiReservationAvailibility(startdate, enddate):
-	print(startdate)
-	print(enddate)
-	sendSlackMessage('this is a test message.')
+	sendSlackMessage('%s - %s' % (startdate, enddate))
 
 
 
 def main():
-	getSupaiReservationAvailibility(getfirstdateofthemonth(), getlastdateofthemonth())
+	first_date=getfirstdateofthemonth()
+	last_date=getlastdateofthemonth(first_date)
+	month=first_date.month
+
+	while month <= 12:
+		getSupaiReservationAvailibility(first_date, last_date)
+
+		if month==12:
+			break
+			
+		month+=1
+		first_date=first_date.replace(month=month)
+		last_date=getlastdateofthemonth(first_date)	
+		
+	
 
 if __name__ == "__main__":
 	main()
