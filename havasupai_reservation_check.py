@@ -6,7 +6,7 @@ import configparser
 import uuid
 import json
 import requests
-import urllib.request, urllib.parse
+import urllib.request, urllib.error
 
 
 # https://api.havasupaireservations.com/v1/Reserves/calendar?ec=2018-09-30&np=2&sc=2018-07-01&token=be43a8f7-213a-4339-92d1-327286ab1bd2
@@ -37,7 +37,10 @@ def sendSlackMessage(message):
 		}
 	payload=json.dumps(payload).encode('utf-8')
 
-	urllib.request.urlopen(slackurl, payload)
+	try:
+		urllib.request.urlopen(slackurl, payload)
+	except (urllib.error.URLError, urllib.error.HTTPError) as err:
+		print(err.reason)
 
 def getSupaiReservationAvailibility(startdate, enddate, token):
 	fullURL=BASE_URL+'ec=%s&np=%s&sc=%s&token=%s' %(enddate, NO_OF_PEOPLE, startdate, token)
@@ -47,8 +50,8 @@ def getSupaiReservationAvailibility(startdate, enddate, token):
 		response=urllib.request.urlopen(httprequest)
 		availabilityJson=response.read().decode('utf-8')
 		parseAvailabilityJson(availabilityJson)
-	except urllib2.HTTPError as err:
-		sendSlackMessage('Error Code: %s, Error Msg: %s' % (err.code, err.msg) )
+	except (urllib.error.URLError, urllib.error.HTTPError) as err:
+		sendSlackMessage('Error Code: %s, Error Msg: %s' % (err.code, err.reason) )
 
 def parseAvailabilityJson(availabilityJson):
 	availabilityDict=json.loads(availabilityJson)
