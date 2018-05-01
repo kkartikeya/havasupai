@@ -16,7 +16,7 @@ BASE_URL='https://api.havasupaireservations.com/v1/Reserves/calendar?'
 
 def getfirstdateofthemonth():
 	return datetime.today().replace(day=1)
-	
+
 def getlastdateofthemonth(first_date):
 	next_month=first_date.replace(day=28) + timedelta(days=4)
 	return next_month - timedelta(days=next_month.day)
@@ -25,7 +25,7 @@ def getSlackURL():
 	config=configparser.RawConfigParser()
 	config.read(CONFIG_FILE_PATH)
 
-	return config.get('SLACKURLS', 'RESERVATION_SLACK_URL')
+	return config.get('SlackURLS', 'RESERVATION_SLACK_URL')
 
 def sendSlackMessage(message):
 	slackurl=getSlackURL()
@@ -48,7 +48,7 @@ def getSupaiReservationAvailibility(startdate, enddate, token):
 		availabilityJson=response.read().decode('utf-8')
 		parseAvailabilityJson(availabilityJson)
 	except urllib2.HTTPError as err:
-		sendSlackMessage('Error Code: %s, Error Msg: %s' % (err.code, err.msg) ) 
+		sendSlackMessage('Error Code: %s, Error Msg: %s' % (err.code, err.msg) )
 
 def parseAvailabilityJson(availabilityJson):
 	availabilityDict=json.loads(availabilityJson)
@@ -58,7 +58,6 @@ def parseAvailabilityJson(availabilityJson):
 
 		if available=='true':
 			sendSlackMessage('%s - %s' % (availabilityDate, available))
-
 
 def main():
 	token=str(uuid.uuid4())
@@ -74,9 +73,7 @@ def main():
 
 		month+=1
 		first_date=first_date.replace(month=month)
-		last_date=getlastdateofthemonth(first_date)	
-		
-	
+		last_date=getlastdateofthemonth(first_date)
 
 if __name__ == "__main__":
 	main()
