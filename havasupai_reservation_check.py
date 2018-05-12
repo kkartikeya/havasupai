@@ -11,7 +11,7 @@ import urllib.request, urllib.error
 
 # https://api.havasupaireservations.com/v1/Reserves/calendar?ec=2018-09-30&np=2&sc=2018-07-01&token=be43a8f7-213a-4339-92d1-327286ab1bd2
 NO_OF_PEOPLE=2
-CONFIG_FILE_PATH='/opt/config/config.properties'
+CONFIG_FILE_PATH='/opt/configuration/config.properties'
 BASE_URL='https://api.havasupaireservations.com/v1/Reserves/calendar?'
 
 def getfirstdateofthemonth():
